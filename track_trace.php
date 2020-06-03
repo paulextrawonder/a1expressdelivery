@@ -1,3 +1,66 @@
+<?php
+
+$trackid="";
+$trackid_err="";
+// Processing form data when form is submitted
+if(isset($_GET['track'])){
+    require_once "admin/config.php";
+
+ //Check for sql injection and replace with an empty string
+    function strip_bad_char($input){
+        $out = preg_replace("/^[a-zA-Z._-]$/", "", $input);
+        return $out;
+    }
+
+
+        //set parameters
+    $trackid = strip_bad_char(trim($_GET['trackid']));
+   
+    
+    //Validate tracker id
+    if (empty($trackid)) {
+      $trackid_err = "Please enter your tracking code";
+    }
+
+    if(empty($trackid_err)){
+        $sql = "SELECT * FROM users WHERE track_code = ?";
+        $stmt = mysqli_stmt_init($dbconnected);
+            if($stmt = mysqli_prepare($dbconnected, $sql)){
+                // Bind variables to the prepared statement as parameters
+                mysqli_stmt_bind_param($stmt, "s", $trackid);
+                
+                // Attempt to execute the prepared statement
+                if(mysqli_stmt_execute($stmt)){
+                    $result = mysqli_stmt_get_result($stmt);
+                    
+                    /* store result */
+                    mysqli_stmt_store_result($stmt);
+                
+                    // Check database if data exit and store the count in a variable.
+                    $rowCount = mysqli_num_rows($result); 
+                        if( $rowCount === 0){
+                        $trackid_err = "Invalid track id! Verify again ";
+                        } 
+                         else if( $rowCount == 1){
+                            header('location: tracker.php?trackid='.$trackid);
+                        }
+                    }else{
+                        echo "Opps! theres and error somewhere! try again";
+                    }
+                }else{
+                    echo "Database connection failed";
+                }
+                 mysqli_stmt_close($stmt);
+                
+}
+ mysqli_close($dbconnected);
+
+}
+
+
+    ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,7 +71,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>MESSENGER DELIVERY SERVICE - A1EXPRESS DELIVERY SERVICE</title>
+    <title>TRACK YOUR PACKAGE - SAMEDAY EXPRESS DELIVERY SERVICE</title>
 
     <!-- owl carousel css -->
     <link rel="stylesheet" href="css/owl.carousel.css"/>
@@ -40,6 +103,13 @@
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <style type="text/css">
+        .error{
+            color: red;
+            font-size: 16px;
+
+        }
+    </style>
 </head>
 <body class="home1">
 
@@ -73,7 +143,7 @@
                             </div>
 
                             <div class="times">
-                                <p><i class="fa fa-clock-o"></i> <span class="day">Sun - Sat</span>7 am - 8:30 pm</p>
+                                <p><i class="fa fa-clock-o"></i> <span class="day">Sun - Sat</span>9 am - 8:30 pm</p>
                             </div>
 
                             <div class="social_links">
@@ -94,7 +164,7 @@
                 <div class="header_middle_wrapper clearfix">
                     <div class="col-md-3 xs_fullwidth col-xs-3">
                         <div class="logo_container">
-                            <a href="index.html"><img class = 'imgresize' src="images/logoN.jpg" alt="logo Here"></a>
+                            <a href="index.html"><img class = 'imgresize' src="images/logo2.png" alt="logo Here"></a>
                         </div>
                     </div>
 
@@ -145,11 +215,11 @@
                     <div class="col-md-12">
                         <div class="breadcrumb_title_wrapper">
                             <div class="page_title">
-                                <h1>Messenger Courier Service</h1>
+                                <h1>Track your package</h1>
                             </div>
                             <ul class="bread_crumb">
                                 <li><a href="index.html">Home</a></li>
-                                <li class="bread_active">Messenger</li>
+                                <li class="bread_active">Track and trace</li>
                             </ul>
                         </div>
                     </div><!-- col-md-12 ends -->
@@ -180,7 +250,7 @@
                                 </div>
 
                                 <!-- Collect the nav links, forms, and other content for toggling -->
-                                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                                     <ul class="nav navbar-nav magic_menu">
                                         <li>
                                             <a href="index.html">home</a></li>
@@ -201,7 +271,7 @@
                                                 </ul>
                                                 <ul>
                                                     <li><a href="nationwide_service.html">Nationwide Courier Service</a></li>
-                                                    <li class="active"><a href="messenger_service.html">Messenger Courier Service</a></li>
+                                                    <li><a href="messenger_service.html">Messenger Courier Service</a></li>
                                                     <li><a href="fulfilment_service.html">Fulfilment Service</a></li>
                                                     
                                                 </ul>
@@ -223,7 +293,7 @@
                                             </div>
                                         </li>
 
-                                        <li><a href="track_trace.php">Track & Trace</a></li>
+                                        <li class="active"><a href="track_trace.php">Track & Trace</a></li>
                                         <li><a href="contact.html">Contact</a></li>
                                     <div class="search_form">
                                         <div class="search_btn" data-toggle="modal" data-target="#search_modal">
@@ -260,130 +330,32 @@
         </div><!-- menu ends -->
     </section>
     <!--================================
-        END SLIDER AREA
+        END BREADCRUMB AREA
     =================================-->
-
 
     <!--================================
-        START ABOUT US AREA
+        START TRACK & TRACE AREA
     =================================-->
-    <section class="service_detail section_padding reveal animated" data-delay="0.2s" data-anim="fadeInUpShort">
-        <!-- container starts -->
+    <section class="tc_section section_padding reveal animated" data-delay="0.2s" data-anim="fadeInUpShort">
         <div class="container">
             <div class="row">
-                <div class="col-md-8 xxs_fullwidth xs_fullwidth col-xs-8">
-                    <div class="search_bar visible-xs reveal animated" data-reveal-anim="fadeInRight">
-                        <form action="#" class="search_widget">
-                            <input placeholder="Search..." type="text">
-                            <button type="submit" class="blog_search_btn"><span class="fa fa-search"></span></button>
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="tc_title"><h4>Please Enter Your Product Code</h4></div>
+                    <div class="tc_form">
+                        <form action ="track_trace.php" method="GET">
+                            <div class="tc_input_wrapper">
+                                <input type="text" name="trackid"  placeholder="Enter Tracking Code">
+                                <button class="tc_btn" name ="track" type="submit">Search</button>
+                            </div>
+                            <div class="error"><?php echo $trackid_err; ?></div>
                         </form>
                     </div>
-
-                    <div class="single_service_detail">
-                        <div class="post_image">
-                            <img src="images/messenger.jpeg" alt="single detail">
-                        </div>
-
-                        <div class="post">
-                            <div class="section_title">
-                                <div class="title"><h2>Messenger Courier Service</h2></div>
-                            </div>
-
-                            <div class="post_content">
-                                <p>
-                                   Providing professional Messenger Service is the goal of A1EXPRESS Delivery. Local or nationwide messenger services are offered and our trained courier and messenger service specialists are available to determine which delivery option fits your time-critical needs.</p>
-
-                                <p>Our deliveries range from small envelopes to large pallets of packages. Our team of delivery messengers are well trained and can handle your packages…large or small and few or many.</p>
-
-                                <p>A1EXPRESS Messenger Service Includes:</p>
-
-                                <p>
-                                <br>Online Order Entry, Package Tracking & Reporting
-                                <br>Free Rate Quotes by Zip Code
-                                <br>Messenger Service Specialists available online or by phone
-                                <br>Bike Messengers available in certain cities
-
-                                <p>Having a messenger service that you can trust is essential in today’s fast paced business world. Leading order placing and tracing technology coupled with 24/7 service makes A1-SameDay the courier delivery partner you need when your packages have to be there immediately.</p>
-
-                                <p>Local Courier Service Delivery Time frame Options:</p>
-                               <p>     
-                                <br>Hour Courier Express
-                                <br>Hour Courier Express
-                                <br>Express Bike Courier Direct
-                                <br>Hour Express Bike Courier
-                                </p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-
-                <div class="col-md-4 xxs_fullwidth xs_fullwidth col-xs-4">
-                    <aside class="sidebar">
-                        <div class="search_category">
-                            <div class="search_bar hidden-xs reveal animated" data-reveal-anim="fadeInRight">
-                                <form action="#" class="search_widget">
-                                    <input placeholder="Search..." type="text">
-                                    <button type="submit" class="blog_search_btn"><span class="fa fa-search"></span></button>
-                                </form>
-                            </div>
-
-                            <div class="category_widget">
-                                <ul>
-                                    <li><a href="ondemand_service.html" active>On-Demand Local Courier Servicet</a></li>
-                                    <li ><a href="scheduled_service.html">Scheduled Delivery Service</a></li>
-                                    <li><a href="next_flight_service.html">Next Flight out Service (NFO)</a></li>
-                                    <li><a href="emergency_service.html">Emergency Service Delivery</a></li>
-                                    <li><a href="nationwide_service.html">Nationwide Courier Service</a></li>
-                                    <li><a href="messenger_service.html">Messenger Courier Service</a></li>
-                                    <li><a href="fulfilment_service.html">Fulfilment Service</a></li>
-                                    <li><a href="fleet_solution_service.html">Fleet Solution Service</a></li>
-                                    <li><a href="bike_service.html">Bike Delivery Service</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="testimonial_slider_wrapper sidebar_widget">
-                            <div class="sidebar_title">
-                                <h4>Clients testimonials</h4>
-                            </div>
-                            <div class="single_item_testimonial_slider">
-                                <div class="single_slider">
-                                    <div class="testimonial">
-                                        <p>Fast efficient, friendly and cost effective.. <span class="quote fa fa-quote-right"></span></p>
-                                    </div>
-                                    <div class="person_about">
-                                        <div class="image">
-                                            <img src="images/testimonial1.png" alt="testimonial-img">
-                                        </div>
-                                        <div class="desig">
-                                            <p class="name">Md.Salam</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single_slider">
-                                    <div class="testimonial">
-                                        <p>Very professional and do exactly what they say, excellent service. <span class="quote fa fa-quote-right"></span></p>
-                                    </div>
-                                    <div class="person_about">
-                                        <div class="image">
-                                            <img src="images/testimonial2.png" alt="testimonial-img">
-                                        </div>
-                                        <div class="desig">
-                                            <p class="name">Shahadat Hossain</p>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </aside>
-                </div>
-            </div><!-- /.row end -->
+            </div>
         </div>
-        <!-- /.container ends -->
     </section>
     <!--================================
-        END ABOUT US AREA
+        END TRACK & TRACE AREA
     =================================-->
 
 
@@ -488,7 +460,7 @@
             <div class="container">
                 <div class="col-md-6 xs_fullwidth col-xs-6">
                     <div class="footer_text_wrapper">
-                        <p class="footer_text">A1EXPRESS. All Rights Reserved | Designed by <a href="#">PaulHack</a></p>
+                        <p class="footer_text">A1-SAMEDAY EXPRESS. All Rights Reserved | Designed by <a href="#">PaulHack</a></p>
                     </div>
                 </div>
                 <div class="col-md-6 xs_fullwidth col-xs-6">
@@ -551,6 +523,32 @@
 
     <!-- Main js -->
     <script src="js/main.js"></script>
-</body>
+    <script>
+        var myCenter=new google.maps.LatLng(32.294445, 72.349724);
+        function initialize()
+            {
+                var mapProp = {
+                  center:myCenter,
+                  zoom:4,
+                  scrollwheel: false,
+                  mapTypeId:google.maps.MapTypeId.ROADMAP,
+                    styles: [{"featureType":"water","elementType":"geometry","stylers":[{"color":"#edf0f5"},{"lightness":17}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#ffffff"},{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffffff"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#ffffff"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#ffffff"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#ffffff"},{"lightness":16}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#f5f5f5"},{"lightness":21}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#dedede"},{"lightness":21}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#ffffff"},{"lightness":16}]},{"elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#333333"},{"lightness":40}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#f2f2f2"},{"lightness":19}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#fefefe"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#fefefe"},{"lightness":17},{"weight":1.2}]}]
+                  };
 
+                var map = new google.maps.Map(document.getElementById("google_map"),mapProp);
+                    var marker = new google.maps.Marker({
+                      position: myCenter,
+                      map: map,
+                      icon:'images/map-marker1.png'
+                    });
+
+
+                var infowindow = new google.maps.InfoWindow({
+                  content:"united-states"
+                });
+            }
+
+            google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+</body>
 </html>

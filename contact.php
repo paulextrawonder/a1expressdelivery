@@ -1,5 +1,68 @@
+<?php
+
+ $name=$phone=$email=$subject=$message="";
+   $name_err=$phone_err=$email_err=$subject_err=$message_err="";
+
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+
+    //basic email header injections
+    function has_header_injection($str){
+        return preg_match("/[\r\n]/", $str);
+    }
+
+    $name=trim($_POST['name']);
+    $phone=trim($_POST['phone']);
+    $email=trim($_POST['email']);
+    $subject=trim($_POST['subject']);
+    $message=trim($_POST['message']);
+
+
+    if (empty($name)) {
+        $name_err = "Please enter your name";
+    }
+    if (empty($phone)) {
+        $phone_err = "Please enter phone number";
+    }
+    if (empty($email)) {
+        $email_err = "Please enter your email";
+    }elseif (!preg_match("/[a-zA-Z0-9.@_]/", $email)) {
+        $email_err = "Enter a valid email adddress";
+    } if (empty($subject)) {
+        $subject_err = "Please enter your Subject";
+    } if (empty($message)) {
+        $message_err = "Please enter your message";
+    }
+    if (has_header_injection($name) || has_header_injection($email) || has_header_injection($subject) || has_header_injection($message)) {
+
+            die(); // kills or stops the script..
+           
+    }
+    if (empty($name_err) && empty($phone_err) && empty($email_err) && empty($subject_err) && empty($message_err)) {
+
+
+    $myMail = "a1samedayexpresdeliveryservice@gmail.com";
+    $header = "from: ".$email;
+    $alert = " - MAIL FROM A1EXPRESSDELIVERY WEBSITE - "."\n\nSender's Name : ". $name. "\n\n Sender's Phone: ". $phone. "\n\nEmail". $email. "\n\nSubject". $subject."\n\nMessage". $message;
+    mail($myMail, $subject, $alert, $header);
+
+    echo "<script>alert('Message sent successfully')</script>";
+     echo "<script>window.open('index.html', '_self')</script>";
+
+    }
+   
+
+}
+
+?>
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
+
 
 <head>
     <meta charset="UTF-8">
@@ -8,7 +71,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>MESSENGER DELIVERY SERVICE - A1EXPRESS DELIVERY SERVICE</title>
+    <title>CONTACT US - A1EXPRESS DELIVERY SERVICE</title>
 
     <!-- owl carousel css -->
     <link rel="stylesheet" href="css/owl.carousel.css"/>
@@ -40,6 +103,16 @@
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+
+    <style type="text/css">
+        .error{
+            position: relative;
+            top: -15px;
+            color: red;
+            font-size: 13px;
+            padding-left: 10px
+        }
+    </style>
 </head>
 <body class="home1">
 
@@ -94,7 +167,7 @@
                 <div class="header_middle_wrapper clearfix">
                     <div class="col-md-3 xs_fullwidth col-xs-3">
                         <div class="logo_container">
-                            <a href="index.html"><img class = 'imgresize' src="images/logoN.jpg" alt="logo Here"></a>
+                            <a href="index.html"><img class = 'imgresize' src="images/logoN.jpg" alt="logo here"></a>
                         </div>
                     </div>
 
@@ -145,11 +218,11 @@
                     <div class="col-md-12">
                         <div class="breadcrumb_title_wrapper">
                             <div class="page_title">
-                                <h1>Messenger Courier Service</h1>
+                                <h1>Contact</h1>
                             </div>
                             <ul class="bread_crumb">
                                 <li><a href="index.html">Home</a></li>
-                                <li class="bread_active">Messenger</li>
+                                <li class="bread_active">Contact</li>
                             </ul>
                         </div>
                     </div><!-- col-md-12 ends -->
@@ -180,7 +253,7 @@
                                 </div>
 
                                 <!-- Collect the nav links, forms, and other content for toggling -->
-                                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                                     <ul class="nav navbar-nav magic_menu">
                                         <li>
                                             <a href="index.html">home</a></li>
@@ -201,7 +274,7 @@
                                                 </ul>
                                                 <ul>
                                                     <li><a href="nationwide_service.html">Nationwide Courier Service</a></li>
-                                                    <li class="active"><a href="messenger_service.html">Messenger Courier Service</a></li>
+                                                    <li><a href="messenger_service.html">Messenger Courier Service</a></li>
                                                     <li><a href="fulfilment_service.html">Fulfilment Service</a></li>
                                                     
                                                 </ul>
@@ -224,7 +297,7 @@
                                         </li>
 
                                         <li><a href="track_trace.php">Track & Trace</a></li>
-                                        <li><a href="contact.html">Contact</a></li>
+                                        <li   class="active"><a href="contact.php">Contact</a></li>
                                     <div class="search_form">
                                         <div class="search_btn" data-toggle="modal" data-target="#search_modal">
                                             <span class="fa fa-search"></span>
@@ -263,134 +336,98 @@
         END SLIDER AREA
     =================================-->
 
-
     <!--================================
-        START ABOUT US AREA
+        START SLIDER AREA
     =================================-->
-    <section class="service_detail section_padding reveal animated" data-delay="0.2s" data-anim="fadeInUpShort">
+    <section class="get_quote section_padding reveal animated" data-delay="0.2s" data-anim="fadeInUpShort">
         <!-- container starts -->
         <div class="container">
+            <!-- row starts -->
             <div class="row">
-                <div class="col-md-8 xxs_fullwidth xs_fullwidth col-xs-8">
-                    <div class="search_bar visible-xs reveal animated" data-reveal-anim="fadeInRight">
-                        <form action="#" class="search_widget">
-                            <input placeholder="Search..." type="text">
-                            <button type="submit" class="blog_search_btn"><span class="fa fa-search"></span></button>
-                        </form>
+                <!-- col-md-3 starts -->
+                <div class="col-md-3 col-sm-4">
+                    <div class="office_schedule">
+                        <div class="section_title">
+                            <div class="title"><h2>BRANCH OFFICE</h2></div>
+                        </div>
+
+                        <ul>
+                            <li><span class="day">United State</span><span class="time">1450 W Peachtree St Nw #200, Atlanta, GA 30309 United State.</span></li>
+                            <!-- <li><span class="day">Monday</span><span class="time">09:30 am-8:30 pm</span></li>
+                            <li><span class="day">Tuesday</span><span class="time">09:30 am-8:30 pm</span></li>
+                            <li><span class="day">Wednesday</span><span class="time">09:30 am-8:30 pm</span></li>
+                            <li><span class="day">Thursday</span><span class="time">09:30 am-8:30 pm</span></li>
+                            <li><span class="day">Friday</span><span class="time">09:30 am-8:30 pm</span></li>
+                            <li><span class="day">Monurday</span><span class="time">09:30 am-8:30 pm</span></li> -->
+                        </ul>
                     </div>
+                </div><!-- /.col-md-3 ends -->
 
-                    <div class="single_service_detail">
-                        <div class="post_image">
-                            <img src="images/messenger.jpeg" alt="single detail">
+                <!-- col-md-3 starts -->
+                <div class="col-md-8 col-sm-7 col-sm-offset-1 col-md-offset-1">
+                    <div class="quote_requ_wrapper">
+                        <div class="section_title">
+                            <div class="title"><h2>LETS HEAR FROM YOU </h2></div>
                         </div>
 
-                        <div class="post">
-                            <div class="section_title">
-                                <div class="title"><h2>Messenger Courier Service</h2></div>
-                            </div>
+                        <div class="sub_content">
+                            <p>We'll get in touch as soon as possible</p>
+                        </div>
 
-                            <div class="post_content">
-                                <p>
-                                   Providing professional Messenger Service is the goal of A1EXPRESS Delivery. Local or nationwide messenger services are offered and our trained courier and messenger service specialists are available to determine which delivery option fits your time-critical needs.</p>
+                        <div class="quote_form">
+                            <form action="contact.php" method="POST">
+                                <div class="form_half left">
+                                    <input type="text" name = "name" placeholder="Full Name" value="<?php echo $name; ?>">
+                                    <span class="error"><?php echo $name_err; ?></span>
+                                </div>
 
-                                <p>Our deliveries range from small envelopes to large pallets of packages. Our team of delivery messengers are well trained and can handle your packages…large or small and few or many.</p>
+                                <div class="form_half right">
+                                    <input type="tel" name = "phone" placeholder="Phone" value="<?php echo $phone; ?>">
+                                    <span class="error"><?php echo $phone_err; ?></span>
+                                </div>
 
-                                <p>A1EXPRESS Messenger Service Includes:</p>
+                                <div>
+                                <input type="email" name = "email" placeholder="Email" value="<?php echo $email; ?>">
+                                <span class="error"><?php echo $email_err; ?></span>
+                                </div>
 
-                                <p>
-                                <br>Online Order Entry, Package Tracking & Reporting
-                                <br>Free Rate Quotes by Zip Code
-                                <br>Messenger Service Specialists available online or by phone
-                                <br>Bike Messengers available in certain cities
+                                <div>
+                                <input type="text" name = "subject" placeholder="subject" value="<?php echo $subject; ?>">
+                                <span class="error"><?php echo $subject_err; ?></span>
+                                </div>
 
-                                <p>Having a messenger service that you can trust is essential in today’s fast paced business world. Leading order placing and tracing technology coupled with 24/7 service makes A1-SameDay the courier delivery partner you need when your packages have to be there immediately.</p>
+                                <div>
+                                <textarea name="message" placeholder="Message" cols="30" rows="10"><?php echo $message; ?></textarea>
+                                <span class="error"><?php echo $message_err; ?></span>
+                                </div>
 
-                                <p>Local Courier Service Delivery Time frame Options:</p>
-                               <p>     
-                                <br>Hour Courier Express
-                                <br>Hour Courier Express
-                                <br>Express Bike Courier Direct
-                                <br>Hour Express Bike Courier
-                                </p>
-                            </div>
+                                <div class="quote_btn_wrapper">
+                                    <button class="trust_btn qute_sbmt" type="submit" name="submit_msg">send message</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-md-4 xxs_fullwidth xs_fullwidth col-xs-4">
-                    <aside class="sidebar">
-                        <div class="search_category">
-                            <div class="search_bar hidden-xs reveal animated" data-reveal-anim="fadeInRight">
-                                <form action="#" class="search_widget">
-                                    <input placeholder="Search..." type="text">
-                                    <button type="submit" class="blog_search_btn"><span class="fa fa-search"></span></button>
-                                </form>
-                            </div>
-
-                            <div class="category_widget">
-                                <ul>
-                                    <li><a href="ondemand_service.html" active>On-Demand Local Courier Servicet</a></li>
-                                    <li ><a href="scheduled_service.html">Scheduled Delivery Service</a></li>
-                                    <li><a href="next_flight_service.html">Next Flight out Service (NFO)</a></li>
-                                    <li><a href="emergency_service.html">Emergency Service Delivery</a></li>
-                                    <li><a href="nationwide_service.html">Nationwide Courier Service</a></li>
-                                    <li><a href="messenger_service.html">Messenger Courier Service</a></li>
-                                    <li><a href="fulfilment_service.html">Fulfilment Service</a></li>
-                                    <li><a href="fleet_solution_service.html">Fleet Solution Service</a></li>
-                                    <li><a href="bike_service.html">Bike Delivery Service</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="testimonial_slider_wrapper sidebar_widget">
-                            <div class="sidebar_title">
-                                <h4>Clients testimonials</h4>
-                            </div>
-                            <div class="single_item_testimonial_slider">
-                                <div class="single_slider">
-                                    <div class="testimonial">
-                                        <p>Fast efficient, friendly and cost effective.. <span class="quote fa fa-quote-right"></span></p>
-                                    </div>
-                                    <div class="person_about">
-                                        <div class="image">
-                                            <img src="images/testimonial1.png" alt="testimonial-img">
-                                        </div>
-                                        <div class="desig">
-                                            <p class="name">Md.Salam</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single_slider">
-                                    <div class="testimonial">
-                                        <p>Very professional and do exactly what they say, excellent service. <span class="quote fa fa-quote-right"></span></p>
-                                    </div>
-                                    <div class="person_about">
-                                        <div class="image">
-                                            <img src="images/testimonial2.png" alt="testimonial-img">
-                                        </div>
-                                        <div class="desig">
-                                            <p class="name">Shahadat Hossain</p>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </aside>
-                </div>
-            </div><!-- /.row end -->
-        </div>
-        <!-- /.container ends -->
+                </div><!-- col-md-3 ends -->
+            </div><!-- /.row ends -->
+        </div><!-- container ends -->
     </section>
     <!--================================
-        END ABOUT US AREA
+        START SLIDER AREA
+    =================================-->
+
+    <!--================================
+        START SLIDER AREA
+    =================================-->
+    <div id="google_map"></div>
+    <!--================================
+        START SLIDER AREA
     =================================-->
 
 
     <!--================================
         START FOOTER
     =================================-->
-      <footer>
+     <footer>
         <div class="big_footer_wrapper section_padding">
             <div class="container">
                 <div class="row">
@@ -403,7 +440,7 @@
                                 </a>
                             </div>
                             <div class="footer_about_us">
-                                <p>A1-SameDayExpress offers a wide range of same-day delivery services including messenger, courier and distribution services for clients consisting of small local firms to large national corporations. </p>
+                                <p>A1Express offers a wide range of same-day delivery services including messenger, courier and distribution services for clients consisting of small local firms to large national corporations. </p>
                             </div>
                             <div class="footer_social">
                                 <h4>get connected</h4>
@@ -441,19 +478,19 @@
                             <div class="widget_title">
                                 <h4>Contact details</h4>
                             </div>
-                            <div class="footer_address">
+                            <div class="footer_subject">
                                 <ul>
-                                    <li><span class="fa fa-paper-plane-o"></span> <div class="address_right">1450 W Peachtree St Nw #200, Atlanta, GA 30309 United State.</div></li>
+                                    <li><span class="fa fa-paper-plane-o"></span> <div class="subject_right">1450 W Peachtree St Nw #200, Atlanta, GA 30309 United State.</div></li>
                                     <li>
                                         <span class="fa fa-phone"></span>
-                                        <div class="number address_right">
+                                        <div class="number subject_right">
                                             <a href="+1 862-234-9837">+1 862-234-9837</a>
                                             <a href="#"></a>
                                         </div>
                                     </li>
                                     <li>
                                         <span class="fa fa-envelope-o"></span>
-                                        <div class="address_right">
+                                        <div class="subject_right">
                                             <a href="mailto:a1samedayexpresdeliveryservice@gmail.com">Mail us</a>
                                             <a href="#"></a>
                                         </div>
@@ -488,7 +525,7 @@
             <div class="container">
                 <div class="col-md-6 xs_fullwidth col-xs-6">
                     <div class="footer_text_wrapper">
-                        <p class="footer_text">A1EXPRESS. All Rights Reserved | Designed by <a href="#">PaulHack</a></p>
+                        <p class="footer_text">A1 EXPRESS. All Rights Reserved | Designed by <a href="#">PaulHack</a></p>
                     </div>
                 </div>
                 <div class="col-md-6 xs_fullwidth col-xs-6">
@@ -498,7 +535,7 @@
                             <li><a href="about_us.html">About Us</a></li>
                             <li><a href="track_trace.php">Track & Trace</a></li>
                             <li><a href="services.html">Service</a></li>
-                            <li><a href="contact.html">Contact Us</a></li>
+                            <li><a href="contact.php">Contact Us</a></li>
                         </ul>
                     </div>
                 </div>
@@ -551,6 +588,45 @@
 
     <!-- Main js -->
     <script src="js/main.js"></script>
+
+    <script>
+
+        var markers = [
+            ['Afghanistan', 36.779030, 69.949081],
+            ['Egypt', 	30.028706, 31.249592],
+            ['Thailand', 13.736717, 100.523186],
+            ['Bangladesh', 23.728783, 	90.393791]
+        ];
+        var myCenter=new google.maps.LatLng(32.294445, 72.349724);
+        function initialize()
+            {
+                var mapProp = {
+                  center:myCenter,
+                  zoom:4,
+                  scrollwheel: false,
+                  mapTypeId:google.maps.MapTypeId.ROADMAP,
+                    styles: [{"featureType":"water","elementType":"geometry","stylers":[{"color":"#edf0f5"},{"lightness":17}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#ffffff"},{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffffff"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#ffffff"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#ffffff"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#ffffff"},{"lightness":16}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#f5f5f5"},{"lightness":21}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#dedede"},{"lightness":21}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#ffffff"},{"lightness":16}]},{"elementType":"labels.text.fill","stylers":[{"Monuration":36},{"color":"#333333"},{"lightness":40}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#f2f2f2"},{"lightness":19}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#fefefe"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#fefefe"},{"lightness":17},{"weight":1.2}]}]
+                  };
+
+                var map = new google.maps.Map(document.getElementById("google_map"),mapProp);
+
+                for( var i=0; i < markers.length; i++){
+                    var marker = new google.maps.Marker({
+                      position: new google.maps.LatLng(markers[i][1], markers[i][2]),
+                      map: map,
+                      icon:'images/map-marker'+i+'.png'
+                    });
+                }
+
+
+                var infowindow = new google.maps.InfoWindow({
+                  content:"united-states"
+                });
+            }
+
+            google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
 </body>
 
+<!-- Mirrored from trusttransport.themeebit.com/quote.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 06 Apr 2020 18:59:38 GMT -->
 </html>
